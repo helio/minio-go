@@ -501,22 +501,28 @@ func (c Client) listObjectVersionsQuery(ctx context.Context, bucketName, prefix,
 		return ListVersionsResult{}, err
 	}
 
+	// temporary fix for https://github.com/minio/minio-go/issues/1410
+	encodingType := listObjectVersionsOutput.EncodingType
+	if encodingType == "" {
+		encodingType = "url"
+	}
+
 	for i, obj := range listObjectVersionsOutput.Versions {
-		listObjectVersionsOutput.Versions[i].Key, err = decodeS3Name(obj.Key, listObjectVersionsOutput.EncodingType)
+		listObjectVersionsOutput.Versions[i].Key, err = decodeS3Name(obj.Key, encodingType)
 		if err != nil {
 			return listObjectVersionsOutput, err
 		}
 	}
 
 	for i, obj := range listObjectVersionsOutput.CommonPrefixes {
-		listObjectVersionsOutput.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, listObjectVersionsOutput.EncodingType)
+		listObjectVersionsOutput.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, encodingType)
 		if err != nil {
 			return listObjectVersionsOutput, err
 		}
 	}
 
 	if listObjectVersionsOutput.NextKeyMarker != "" {
-		listObjectVersionsOutput.NextKeyMarker, err = decodeS3Name(listObjectVersionsOutput.NextKeyMarker, listObjectVersionsOutput.EncodingType)
+		listObjectVersionsOutput.NextKeyMarker, err = decodeS3Name(listObjectVersionsOutput.NextKeyMarker, encodingType)
 		if err != nil {
 			return listObjectVersionsOutput, err
 		}
@@ -588,22 +594,28 @@ func (c Client) listObjectsQuery(ctx context.Context, bucketName, objectPrefix, 
 		return listBucketResult, err
 	}
 
+	// temporary fix for https://github.com/minio/minio-go/issues/1410
+	encodingType := listBucketResult.EncodingType
+	if encodingType == "" {
+		encodingType = "url"
+	}
+
 	for i, obj := range listBucketResult.Contents {
-		listBucketResult.Contents[i].Key, err = decodeS3Name(obj.Key, listBucketResult.EncodingType)
+		listBucketResult.Contents[i].Key, err = decodeS3Name(obj.Key, encodingType)
 		if err != nil {
 			return listBucketResult, err
 		}
 	}
 
 	for i, obj := range listBucketResult.CommonPrefixes {
-		listBucketResult.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, listBucketResult.EncodingType)
+		listBucketResult.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, encodingType)
 		if err != nil {
 			return listBucketResult, err
 		}
 	}
 
 	if listBucketResult.NextMarker != "" {
-		listBucketResult.NextMarker, err = decodeS3Name(listBucketResult.NextMarker, listBucketResult.EncodingType)
+		listBucketResult.NextMarker, err = decodeS3Name(listBucketResult.NextMarker, encodingType)
 		if err != nil {
 			return listBucketResult, err
 		}
@@ -816,25 +828,31 @@ func (c Client) listMultipartUploadsQuery(ctx context.Context, bucketName, keyMa
 		return listMultipartUploadsResult, err
 	}
 
-	listMultipartUploadsResult.NextKeyMarker, err = decodeS3Name(listMultipartUploadsResult.NextKeyMarker, listMultipartUploadsResult.EncodingType)
+	// temporary fix for https://github.com/minio/minio-go/issues/1410
+	encodingType := listMultipartUploadsResult.EncodingType
+	if encodingType == "" {
+		encodingType = "url"
+	}
+
+	listMultipartUploadsResult.NextKeyMarker, err = decodeS3Name(listMultipartUploadsResult.NextKeyMarker, encodingType)
 	if err != nil {
 		return listMultipartUploadsResult, err
 	}
 
-	listMultipartUploadsResult.NextUploadIDMarker, err = decodeS3Name(listMultipartUploadsResult.NextUploadIDMarker, listMultipartUploadsResult.EncodingType)
+	listMultipartUploadsResult.NextUploadIDMarker, err = decodeS3Name(listMultipartUploadsResult.NextUploadIDMarker, encodingType)
 	if err != nil {
 		return listMultipartUploadsResult, err
 	}
 
 	for i, obj := range listMultipartUploadsResult.Uploads {
-		listMultipartUploadsResult.Uploads[i].Key, err = decodeS3Name(obj.Key, listMultipartUploadsResult.EncodingType)
+		listMultipartUploadsResult.Uploads[i].Key, err = decodeS3Name(obj.Key, encodingType)
 		if err != nil {
 			return listMultipartUploadsResult, err
 		}
 	}
 
 	for i, obj := range listMultipartUploadsResult.CommonPrefixes {
-		listMultipartUploadsResult.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, listMultipartUploadsResult.EncodingType)
+		listMultipartUploadsResult.CommonPrefixes[i].Prefix, err = decodeS3Name(obj.Prefix, encodingType)
 		if err != nil {
 			return listMultipartUploadsResult, err
 		}
